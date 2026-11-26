@@ -1,0 +1,57 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/layout/Section.astro';
+import NameMark from '@components/navigation/NameMark.astro';
+import FilterBar from '@components/core/FilterBar.astro';
+import PostRow from '@components/content/PostRow.astro';
+import { SITE } from '@data/site';
+import { KINDS, getDocs, type DocKind } from '@lib/docs';
+
+const docs = await getDocs();
+const kinds = Object.keys(KINDS) as DocKind[];
+const options = [
+  { id: 'all' as const, label: 'all', count: docs.length },
+  ...kinds.map((kind) => ({
+    id: kind,
+    label: KINDS[kind].many,
+    count: docs.filter((doc) => doc.data.kind === kind).length
+  }))
+];
+
+const byYear = Map.groupBy(docs, (doc) => String(doc.data.date.getUTCFullYear()));
+const thisYear = String(new Date().getUTCFullYear());
+
+const schema = [
+  {
+    '@type': 'CollectionPage',
+    '@id': `${Astro.url.href}#collection`,
+    name: 'docs',
+    description: SITE.tagline,
+    url: Astro.url.href
+  }
+];
+---
+
+<Layout title="docs" description={SITE.tagline} schema={schema}>
+  <NameMark>docs</NameMark>
+
+  <Section label="filter">
+    <FilterBar options={options} />
+  </Section>
+
+  {docs.length > 0 ? (
+    [...byYear].map(([year, list]) => (
+      <Section label={year} now={year === thisYear} data-year={year}>
+        <ul class="ag-postlist">
+          {list.map((doc) => (
+            <PostRow doc={doc} data-kind={doc.data.kind} />
+          ))}
+        </ul>
+      </Section>
+    ))
+  ) : (
+    <Section label="empty" statement>
+      No docs published yet.
+    </Section>
+  )}
+</Layout>

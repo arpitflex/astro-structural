@@ -1,0 +1,36 @@
+/* Colors: ink on paper. Green is the only hue and marks the one current thing.
+   Every token carries its light and dark value; color-scheme picks the side.
+   The page follows the system by default; data-theme="light|dark" on <html> pins it. */
+:root {
+  color-scheme: light dark;
+
+  /* Paper and ink */
+  --bg:   light-dark(#f2f2ee, #131312);
+  --fg-1: light-dark(#131312, #ecece7);  /* names, titles, text */
+  --fg-2: light-dark(#55554f, #b4b4ae);  /* secondary lists (trace names) */
+  --fg-3: light-dark(#6b6b66, #999993);  /* metadata, dates */
+  --fg-4: light-dark(#7c7c76, #85857f);  /* captions, counts, tree glyphs */
+
+  /* Lines */
+  --line-section: var(--fg-1);                                         /* 2px, opens a section */
+  --line-item:    var(--fg-1);                                         /* 1px, opens an item */
+  --line-row:     light-dark(rgb(19 19 18 / 10%), rgb(236 236 231 / 12%));  /* 1px, separates rows */
+  --line-grid:    light-dark(rgb(19 19 18 / 7%),  rgb(236 236 231 / 7%));   /* 1px, the visible column grid */
+
+  /* Washes */
+  --hover:     light-dark(rgb(19 19 18 / 3.5%), rgb(236 236 231 / 4.5%));
+  --selection: light-dark(rgb(19 19 18 / 14%),  rgb(236 236 231 / 18%));
+
+  /* The one hue */
+  --now: light-dark(oklch(0.62 0.16 150), oklch(0.74 0.16 150));
+
+  /* Commit field: five steps of ink */
+  --heat-0: light-dark(#e2e2dd, #222220);
+  --heat-1: light-dark(#bcbcb6, #3d3d3a);
+  --heat-2: light-dark(#8c8c86, #6b6b66);
+  --heat-3: light-dark(#52524d, #a5a59f);
+  --heat-4: var(--fg-1);                  /* full ink */
+}
+
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"]  { color-scheme: dark; }

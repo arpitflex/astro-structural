@@ -1,0 +1,41 @@
+---
+kind: note
+title: Writing docs with MDX sections and frontmatter
+date: 2026-11-10
+dek: Every markdown file in src/content/docs becomes a structured page on the twelve-column grid.
+---
+
+## how docs are structured
+
+Each file in `src/content/docs/<id>.mdx` maps directly to `/docs/<id>`. Frontmatter is validated at build time by the schema in `src/content.config.ts`.
+
+Every `##` heading opens a new section on the grid: the heading sits in the label columns (`1–4`) and the prose that follows spans six content columns (`5–10`). Anything before the first `##` heading, such as component imports, stays untouched.
+
+## frontmatter fields
+
+| field      | required | purpose                                |
+| ---------- | -------- | -------------------------------------- |
+| `kind`     | yes      | `pm`, `adr`, or `note`                 |
+| `title`    | yes      | sentence-case article title            |
+| `dek`      | yes      | one-line summary under the title       |
+| `date`     | yes      | ISO date (`YYYY-MM-DD`)                |
+| `trace`    | no       | matches an `id` in `src/data/trace.ts` |
+| `facts`    | no       | ordered key-value metadata cells       |
+| `timeline` | no       | incident events for `<Timeline />`     |
+
+## code blocks and typography
+
+Fenced code blocks are highlighted at build time with Shiki using dual `github-light` and `github-dark` themes, then wrapped with a language label and copy button:
+
+```ts
+// src/lib/docs.ts orders all collection entries newest first.
+export const KINDS = {
+  pm: { one: 'post-mortem', many: 'post-mortems' },
+  adr: { one: 'decision', many: 'decisions' },
+  note: { one: 'note', many: 'notes' }
+} as const;
+```
+
+> Interface text—navigation, section headings, labels, dates, and tags—stays lowercase. Prose and document titles use sentence case.
+
+See [the sample post-mortem](/docs/sample-postmortem) for an example combining `facts` and `<Timeline />`.

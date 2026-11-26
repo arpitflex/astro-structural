@@ -1,0 +1,47 @@
+/* Type: Archivo (grotesk, width axis) for everything read; Martian Mono for everything labelled.
+   Lowercase throughout the interface. Sentence case inside prose. Letter-spacing is 0 everywhere. */
+:root {
+  --font-sans: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'Martian Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --wdth-name: 125%;   /* the name and page words only */
+  --wdth-mono: 87.5%;  /* all mono */
+
+  /* Name / page word: one per page */
+  --fs-name: clamp(48px, 10.5vw, 118px);
+  --lh-name: 1;
+  --fw-name: 700;
+  --name-bearing: 2px; /* Archivo's left side bearing at this size; the name is pulled back by it to sit on the line */
+
+  /* Titles */
+  --fs-h1: clamp(36px, 5vw, 64px);  --lh-h1: 1;         /* doc title */
+  --fs-title-l: 40px;               --lh-title-l: 44px; /* wide tile */
+  --fs-title: 24px;                 --lh-title: 28px;   /* tile */
+  --fs-title-s: 20px;               --lh-title-s: 24px; /* list rows, prose h3 */
+  --fw-title: 600;
+
+  /* Text */
+  --fs-lead: 28px;  --lh-lead: 36px;   /* section statements, deks, quotes */
+  --fs-body: 18px;  --lh-body: 30px;   /* prose */
+  --fw-text: 420;
+  --fw-strong: 500;                    /* emphasis inside text: strong, the resolving event */
+
+  /* Mono */
+  --fs-mono: 11px;  --lh-mono: 16px;   /* labels, nav, dates */
+  --fs-micro: 10px; --lh-micro: 14px;  /* captions, tags */
+  --fs-code: 12px;  --lh-code: 20px;   /* code blocks */
+  --fw-mono: 400;
+  --fw-mono-strong: 500;               /* section labels */
+
+  /* Recipes for the font shorthand. Mono recipes still need font-stretch: var(--wdth-mono). */
+  --type-name:    var(--fw-name) var(--fs-name)/var(--lh-name) var(--font-sans);
+  --type-h1:      var(--fw-title) var(--fs-h1)/var(--lh-h1) var(--font-sans);
+  --type-title-l: var(--fw-title) var(--fs-title-l)/var(--lh-title-l) var(--font-sans);
+  --type-title:   var(--fw-title) var(--fs-title)/var(--lh-title) var(--font-sans);
+  --type-title-s: var(--fw-title) var(--fs-title-s)/var(--lh-title-s) var(--font-sans);
+  --type-lead:    var(--fw-text) var(--fs-lead)/var(--lh-lead) var(--font-sans);
+  --type-body:    var(--fw-text) var(--fs-body)/var(--lh-body) var(--font-sans);
+  --type-mono:    var(--fw-mono) var(--fs-mono)/var(--lh-mono) var(--font-mono);
+  --type-label:   var(--fw-mono-strong) var(--fs-mono)/var(--lh-mono) var(--font-mono);
+  --type-micro:   var(--fw-mono) var(--fs-micro)/var(--lh-micro) var(--font-mono);
+  --type-code:    var(--fw-mono) var(--fs-code)/var(--lh-code) var(--font-mono);
+}

@@ -1,0 +1,84 @@
+---
+import '../../design-system/styles.css';
+import MetaBar from '@components/navigation/MetaBar.astro';
+import SiteFooter from '@components/navigation/SiteFooter.astro';
+import { SITE } from '@data/site';
+import { personId } from '@lib/schema';
+
+interface Props {
+  /** The page word ("about") or a doc title. Left out on the home page. */
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+  /** Extra schema.org nodes for this page; the site and person are always included. */
+  schema?: Record<string, unknown>[];
+}
+
+const { title, description = SITE.description, type = 'website', schema = [] } = Astro.props;
+
+const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.role}`;
+const siteUrl = Astro.site ?? Astro.url;
+const origin = siteUrl.origin;
+const personNodeId = personId(siteUrl);
+
+const person: Record<string, unknown> = {
+  '@type': 'Person',
+  '@id': personNodeId,
+  name: SITE.fullName,
+  url: origin,
+  ...(SITE.jobTitle ? { jobTitle: SITE.jobTitle } : {}),
+  ...(SITE.company ? { worksFor: { '@type': 'Organization', name: SITE.company } } : {}),
+  ...(SITE.socials.length > 0 ? { sameAs: SITE.socials.map((s) => s.url) } : {})
+};
+const website = {
+  '@type': 'WebSite',
+  '@id': `${origin}/#website`,
+  url: origin,
+  name: SITE.name,
+  description: SITE.description,
+  publisher: { '@id': personNodeId }
+};
+const jsonLd = { '@context': 'https://schema.org', '@graph': [website, person, ...schema] };
+---
+
+<!doctype html>
+<html lang={SITE.lang} class="ag">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.fullName} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/Archivo-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/MartianMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={siteUrl.host} />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#main" class="ag-skip-link">
+      skip to content
+    </a>
+    <div class="ag-page">
+      <div class="ag-page__grid">
+        <MetaBar />
+        <main id="main" class="ag-page__main">
+          <slot />
+        </main>
+        <SiteFooter />
+      </div>
+    </div>
+  </body>
+</html>

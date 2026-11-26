@@ -1,0 +1,27 @@
+---
+kind: adr
+title: Strict Content Security Policy for static deployments
+date: 2025-11-20
+dek: Generating script hashes at build time while remaining portable across any static hosting provider.
+trace: northstar
+facts:
+  status: accepted
+  output: static dist/
+  csp: build-time hashes
+  trailing slash: never
+---
+
+## context
+
+Static sites with inline head scripts (such as pre-paint theme restoration) often disable CSP or fall back to `'unsafe-inline'` for scripts.
+
+## decision
+
+- **Build-time script hashing.** `astro.config.mjs` enables Astro's `security.csp` and injects `src/scripts/theme-init.js` via `injectScript('head-inline', ...)`, so every `<script>` tag gets a build-time hash in the generated `<meta>` policy.
+- **Portable static output.** No server adapter is required; `pnpm run build` emits plain static assets in `dist/` alongside generated `rss.xml`, `sitemap-index.xml`, and `robots.txt`.
+- **Optional Cloudflare Workers config.** `wrangler.jsonc` and `public/_headers` are included pre-configured with `html_handling: "drop-trailing-slash"` and `frame-ancestors 'none'` for teams deploying to Cloudflare.
+
+## consequences
+
+- Because Astro does not apply `security.csp` during `astro dev`, always verify script changes with `pnpm run build && pnpm run preview`.
+- Shiki's build-time warning regarding inline style attributes is expected because `styleDirective` intentionally permits `'unsafe-inline'` attributes for syntax tokens and trace lane positioning.

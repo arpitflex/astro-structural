@@ -1,0 +1,17 @@
+---
+import type { TraceWindow } from '@lib/trace';
+
+/** The year labels over the lanes, one per content column. */
+interface Props {
+  years: TraceWindow;
+}
+
+const { years } = Astro.props;
+const labels = Array.from({ length: years.to - years.from }, (_, i) => years.from + i);
+---
+
+<div class="ag-trace__years">
+  {labels.map((year) => (
+    <span>{year}</span>
+  ))}
+</div>

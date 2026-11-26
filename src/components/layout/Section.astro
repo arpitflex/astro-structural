@@ -1,0 +1,63 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import NowMark from '@components/core/NowMark.astro';
+
+/**
+ * The one block every page is built from: a 2px rule, the label in columns 1–4, content in 5–12.
+ * Slots: the default content; `aside` (full only) in the head beside the label; `action` (full only)
+ * in the head at columns 10–12; `foot` under the content on column 5, in either layout.
+ * The head holds either an aside or an action, not both: they share the same columns.
+ * src/lib/markdown-sections.ts mirrors this markup for the h2 sections of a doc; change both together.
+ */
+interface Props extends HTMLAttributes<'section'> {
+  label: string;
+  /** split: label beside the content. full: content takes all twelve columns under the head. */
+  layout?: 'split' | 'full';
+  /** Set the default slot in the large statement face (split only). */
+  statement?: boolean;
+  /** Mark this as the current section with the green square. */
+  now?: boolean;
+}
+
+const { label, layout = 'split', statement = false, now = false, ...rest } = Astro.props;
+---
+
+<section class="ag-section" {...rest}>
+  <div class="ag-section__head">
+    <h2 class="ag-section__label">
+      {now && <NowMark />}
+      {label}
+    </h2>
+    {layout === 'split' && (
+      <div class="ag-section__body">
+        {statement ? (
+          <p class="ag-section__statement">
+            <slot />
+          </p>
+        ) : (
+          <slot />
+        )}
+      </div>
+    )}
+    {Astro.slots.has('aside') && (
+      <div class="ag-section__aside">
+        <slot name="aside" />
+      </div>
+    )}
+    {Astro.slots.has('action') && (
+      <div class="ag-section__action">
+        <slot name="action" />
+      </div>
+    )}
+  </div>
+  {layout === 'full' && (
+    <div class="ag-section__grid">
+      <slot />
+    </div>
+  )}
+  {Astro.slots.has('foot') && (
+    <div class="ag-section__foot">
+      <slot name="foot" />
+    </div>
+  )}
+</section>

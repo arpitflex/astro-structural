@@ -1,0 +1,46 @@
+/* Grid, rules, vertical rhythm, motion. The grid is visible; everything snaps to it. */
+:root {
+  /* Columns */
+  --cols: 12;
+  --page-max: 1200px;
+  --page-margin: clamp(16px, 3.4vw, 40px);
+  --page-pad: 40px;            /* above the meta bar and below the footer */
+  --inset: 8px;                /* text starts 8px right of a column line and stops 8px before the next */
+  --grid-lines: repeating-linear-gradient(to right, var(--line-grid) 0 1px, transparent 1px calc(100% / var(--cols)));
+
+  /* Column recipes (grid-column values) */
+  --col-full: 1 / -1;
+  --col-label: 1 / 5;          /* section labels, trace names */
+  --col-content: 5 / 13;       /* section content, an eight-track subgrid */
+  --col-prose: 1 / 7;          /* inside the content subgrid: six of its eight columns, about 64ch of prose */
+  --grid-cols: repeat(var(--cols), minmax(0, 1fr));
+  --grid-cols-content: repeat(8, minmax(0, 1fr));  /* rows inside the content column: link rows, post rows, the trace years */
+
+  /* Rules */
+  --rule-section: 2px solid var(--line-section);
+  --rule-item: 1px solid var(--line-item);
+  --rule-row: 1px solid var(--line-row);
+  --underline-offset: 3px;     /* prose links and timeline tags: the underline sits this far under the baseline */
+
+  /* Marks and lanes */
+  --mark: 8px;                 /* the square: the now mark, a timeline node, a role lane */
+  --lane: 12px;                /* a trace lane */
+  --commit-gap: 2px;           /* between commit cells */
+
+  /* Vertical rhythm (8px unit) */
+  --gap-tight: 4px;            /* stacked mono lines: a key over its value, a time over its delta */
+  --gap-inline: 8px;           /* a mark or arrow beside its word */
+  --gap-rule: 8px;             /* rule to first line of text */
+  --gap-row: 16px;
+  --gap-block: 24px;
+  --gap-tile: 40px;            /* between item rows */
+  --gap-hero: 72px;            /* meta bar to name */
+  --gap-section: 120px;        /* between sections */
+  --row-h: 40px;               /* mono rows: trace, key-value */
+
+  /* Motion: state changes are instant or near it */
+  --dur: 80ms;
+  --ease: linear;
+  --dur-swap: 140ms;           /* page and theme swaps */
+  --ease-settle: cubic-bezier(0, 0, 0.2, 1);  /* the page settle only; everything else is linear */
+}

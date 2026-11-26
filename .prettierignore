@@ -1,0 +1,6 @@
+dist/
+.astro/
+.wrangler/
+pnpm-lock.yaml
+# One declaration block per line, kept dense on purpose.
+design-system/

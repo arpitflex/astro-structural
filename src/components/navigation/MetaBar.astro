@@ -1,0 +1,72 @@
+---
+import { SITE } from '@data/site';
+
+const path = Astro.url.pathname;
+const home = path === '/';
+const current = SITE.nav.find((link) => path === link.href || path.startsWith(`${link.href}/`));
+---
+
+<header class="ag-meta">
+  {home ? (
+    <span class="ag-meta__id ag-meta__id--role">{SITE.role}</span>
+  ) : (
+    <a class="ag-meta__id" href="/">
+      {SITE.name}
+    </a>
+  )}
+
+  <nav class="ag-meta__nav" aria-label="primary">
+    {SITE.nav.map((link) => (
+      <a href={link.href} aria-current={link === current ? 'page' : undefined}>
+        {link.label}
+      </a>
+    ))}
+  </nav>
+
+  <div class="ag-meta__theme" role="group" aria-label="theme">
+    <button type="button" data-theme-btn="light" aria-pressed="false">
+      light
+    </button>
+    <button type="button" data-theme-btn="dark" aria-pressed="false">
+      dark
+    </button>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]');
+  const systemDark = matchMedia('(prefers-color-scheme: dark)');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  // The page follows the system until a button is pressed. The choice is kept in localStorage and
+  // applied before first paint by src/scripts/theme-init.js, which astro.config.mjs puts in <head>.
+  const current = () => root.dataset.theme ?? (systemDark.matches ? 'dark' : 'light');
+
+  function reflect() {
+    for (const button of buttons) button.setAttribute('aria-pressed', String(button.dataset.themeBtn === current()));
+  }
+
+  function apply(theme: string) {
+    root.dataset.theme = theme;
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {}
+    reflect();
+  }
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const theme = button.dataset.themeBtn!;
+      if (theme === current()) return;
+      if (!document.startViewTransition || reduceMotion.matches) return apply(theme);
+      root.classList.add('theme-transitioning');
+      document
+        .startViewTransition(() => apply(theme))
+        .finished.finally(() => root.classList.remove('theme-transitioning'));
+    });
+  }
+
+  reflect();
+  systemDark.addEventListener('change', reflect);
+</script>

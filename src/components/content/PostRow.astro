@@ -1,0 +1,22 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Kind from '@components/core/Kind.astro';
+import { formatDate, formatDayMonth } from '@lib/dates';
+import { docHref, type Doc } from '@lib/docs';
+
+interface Props extends HTMLAttributes<'li'> {
+  doc: Doc;
+  /** Show the year. Off in lists that are already grouped by year. */
+  year?: boolean;
+}
+
+const { doc, year = false, ...rest } = Astro.props;
+---
+
+<li {...rest}>
+  <a href={docHref(doc)} class="ag-postrow">
+    <span class="ag-postrow__date">{year ? formatDate(doc.data.date) : formatDayMonth(doc.data.date)}</span>
+    <Kind kind={doc.data.kind} class="ag-postrow__type" />
+    <span class="ag-postrow__title">{doc.data.title}</span>
+  </a>
+</li>

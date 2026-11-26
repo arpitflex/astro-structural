@@ -1,0 +1,26 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/layout/Section.astro';
+import NameMark from '@components/navigation/NameMark.astro';
+import TraceExplorer from '@components/data/TraceExplorer.astro';
+import TraceYears from '@components/data/TraceYears.astro';
+import { TRACE } from '@data/trace';
+import { traceWindow } from '@lib/trace';
+
+const years = traceWindow();
+---
+
+<Layout title="trace" description="Where I have worked and studied, read like a stack trace.">
+  <NameMark>trace</NameMark>
+
+  {TRACE.length > 0 ? (
+    <Section label="span" layout="full">
+      <TraceYears slot="aside" years={years} />
+      <TraceExplorer years={years} />
+    </Section>
+  ) : (
+    <Section label="span" statement>
+      No trace entries configured yet.
+    </Section>
+  )}
+</Layout>

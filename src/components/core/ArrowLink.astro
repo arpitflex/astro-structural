@@ -1,0 +1,40 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'a'> {
+  href: string;
+  /** ↗ instead of → */
+  external?: boolean;
+  /** ← before the text instead of an arrow after it */
+  back?: boolean;
+  /** Grey at rest, ink on hover. */
+  quiet?: boolean;
+}
+
+// `slot` names the parent's slot; it is not an attribute for the anchor.
+const {
+  external = false,
+  back = false,
+  quiet = false,
+  class: className,
+  target: propTarget,
+  rel: propRel,
+  slot: _slot,
+  ...rest
+} = Astro.props;
+
+const target = propTarget ?? (external ? '_blank' : undefined);
+const rel = (() => {
+  if (target !== '_blank') return propRel;
+  const tokens = new Set((propRel ? String(propRel) : '').split(/\s+/).filter(Boolean));
+  tokens.add('noopener');
+  tokens.add('noreferrer');
+  return Array.from(tokens).join(' ');
+})();
+---
+
+<a class:list={['ag-link', { 'ag-link--quiet': quiet }, className]} target={target} rel={rel} {...rest}>
+  {back && <span aria-hidden="true">←</span>}
+  <slot />
+  {!back && <span aria-hidden="true">{external ? '↗' : '→'}</span>}
+</a>

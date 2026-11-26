@@ -1,0 +1,44 @@
+---
+import KindMark from '@components/core/KindMark.astro';
+import type { DocKind } from '@lib/docs';
+
+/**
+ * Filters the docs list by kind. Works on the page it is placed in: docs/index marks each PostRow with
+ * `data-kind` and each year Section with `data-year`; a year is hidden once none of its rows show.
+ */
+interface Props {
+  options: { id: DocKind | 'all'; label: string; count: number }[];
+}
+
+const { options } = Astro.props;
+---
+
+<div class="ag-filter" role="group" aria-label="filter docs by type">
+  {options.map((option, i) => (
+    <button
+      type="button"
+      class="ag-kind ag-filter__opt"
+      data-filter={option.id}
+      aria-pressed={i === 0 ? 'true' : 'false'}
+    >
+      <KindMark kind={option.id} />
+      {option.label}
+      <span class="ag-filter__count">{option.count}</span>
+    </button>
+  ))}
+</div>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.ag-filter__opt');
+  const rows = document.querySelectorAll<HTMLElement>('[data-kind]');
+  const years = document.querySelectorAll<HTMLElement>('[data-year]');
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const kind = button.dataset.filter;
+      for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+      for (const row of rows) row.hidden = kind !== 'all' && row.dataset.kind !== kind;
+      for (const year of years) year.hidden = !year.querySelector('[data-kind]:not([hidden])');
+    });
+  }
+</script>

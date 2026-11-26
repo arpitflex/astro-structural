@@ -1,0 +1,31 @@
+---
+kind: adr
+title: A twelve-column grid with zero client framework
+date: 2026-11-02
+dek: Why every page uses visible structural rules, CSS subgrid, and light-dark() tokens instead of cards or client hydration.
+trace: acme
+facts:
+  status: accepted
+  tokens: design-system/tokens
+  classes: ag-*
+  client js: ~2 kb inline
+---
+
+## context
+
+Personal engineering sites often accumulate wrapper components, card borders, shadows, and client-side frameworks that obscure typography and slow down static pages.
+
+We wanted a layout system where position, proportion, and hierarchy come strictly from one shared grid rather than decorative containers.
+
+## decision
+
+1. **Visible twelve-column grid.** All layout runs on CSS Grid (`--grid-cols`) with zero gutter and an `8px` text inset (`--inset`). Content sections use `subgrid` so rules, tables, code fences, and timelines align to exact column lines.
+2. **Lines as the only ornament.** Sections open with a `2px` ink rule, items with a `1px` rule, and rows close with a faint hairline.
+3. **One accent hue.** Everything is ink on paper, reserving `--now` green strictly for active states: the current role, the current year, today's commit cell, and resolved incident nodes.
+4. **No client framework.** Only three small browser behaviors exist: pre-paint theme initialization, the `/docs` kind filter, and the code-block copy button.
+
+## consequences
+
+- Styling lives centrally in `design-system/` (`tokens/` and `components/components.css`), while Astro components stay purely structural.
+- Browser-viewable reference cards in `design-system/guidelines/` document every token and grid invariant directly against `styles.css`.
+- Cross-document transitions rely on native `@view-transition` CSS rather than client-side routing scripts.

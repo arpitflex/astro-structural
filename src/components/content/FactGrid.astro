@@ -1,0 +1,17 @@
+---
+interface Props {
+  /** Rendered in order: { status: 'resolved', duration: '3h 12m' } */
+  facts: Record<string, string>;
+}
+
+const { facts } = Astro.props;
+---
+
+<dl class="ag-facts">
+  {Object.entries(facts).map(([key, value]) => (
+    <div class="ag-facts__cell">
+      <dt class="ag-facts__k">{key}</dt>
+      <dd class="ag-facts__v">{value}</dd>
+    </div>
+  ))}
+</dl>

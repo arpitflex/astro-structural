@@ -1,0 +1,28 @@
+---
+kind: note
+title: Enabling the GitHub commit field on the home page
+date: 2026-05-02
+dek: How the 48-week contribution grid fetches data at build time and degrades gracefully when unconfigured.
+---
+
+## how it works
+
+At build time, `src/lib/github.ts` queries GitHub's GraphQL `contributionCalendar` across every username listed in `SITE.githubUsers` (`src/data/site.ts`), sums daily counts, and maps the last 48 weeks into `--heat-0` through `--heat-4`.
+
+On narrower viewports, `CommitField.astro` trims older columns cleanly to preserve square aspect ratios: 48 weeks on desktop, 24 weeks under `760px`, and 12 weeks under `600px`.
+
+## setup
+
+1. Add one or more GitHub handles to `githubUsers` in `src/data/site.ts`:
+
+```ts
+githubUsers: ['your-handle'];
+```
+
+2. Copy `.env.example` to `.env` for local builds and provide a token with public profile read access:
+
+```sh
+GITHUB_TOKEN=ghp_your_token_here
+```
+
+3. For production deployments, pass `GITHUB_TOKEN` in your CI environment. When `githubUsers` is empty or `GITHUB_TOKEN` is absent, the build simply omits the commit field rather than displaying synthetic activity.

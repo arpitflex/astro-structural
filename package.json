@@ -1,0 +1,43 @@
+{
+  "name": "astro-structural",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "An open-source Astro personal site and technical notes template inspired by Wim Crouwel and Dutch structural functionalism.",
+  "keywords": [
+    "astro",
+    "astro-template",
+    "blog",
+    "portfolio",
+    "swiss-design",
+    "mdx"
+  ],
+  "type": "module",
+  "packageManager": "pnpm@12.23.0",
+  "engines": {
+    "node": ">=26.0.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "deploy": "astro build && wrangler deploy",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.10",
+    "@astrojs/mdx": "^8.1.6",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.6",
+    "astro": "^7.4.13",
+    "satteri": "^0.11.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "prettier": "^3.10.1",
+    "prettier-plugin-astro": "^1.1.2",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.168.0"
+  }
+}

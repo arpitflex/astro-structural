@@ -1,0 +1,87 @@
+---
+import FactGrid from '@components/content/FactGrid.astro';
+import PostRow from '@components/content/PostRow.astro';
+import Lane from '@components/data/Lane.astro';
+import { TRACE, type Month } from '@data/trace';
+import { getDocs } from '@lib/docs';
+import { formatDuration, formatMonth, groupEnd, groupStart, type TraceWindow } from '@lib/trace';
+
+/** The trace page: one <details> per organisation, read like a stack trace, roles nested with ├─ └─. */
+interface Props {
+  years: TraceWindow;
+}
+
+/** One line of a frame: the organisation first, then each role when there is more than one. */
+interface Row {
+  tree: string;
+  name: string;
+  place?: string;
+  start: Month;
+  end?: Month;
+  group?: boolean;
+}
+
+const { years } = Astro.props;
+const docs = await getDocs();
+---
+
+<div class="ag-trace">
+  {TRACE.map((group) => {
+    const start = groupStart(group);
+    const end = groupEnd(group);
+    const study = group.kind === 'study';
+    const roles = group.roles.length > 1 ? group.roles : [];
+    const rows: Row[] = [
+      { tree: 'at', name: group.name, place: group.place, start, end, group: true },
+      ...roles.map((role, i) => ({
+        tree: i === roles.length - 1 ? '   └─' : '   ├─',
+        name: role.name,
+        start: role.start,
+        end: role.end
+      }))
+    ];
+    const groupDocs = docs.filter((doc) => doc.data.trace === group.id);
+    const facts = {
+      place: group.place,
+      when: `${formatMonth(start)} – ${end ? formatMonth(end) : 'now'}`,
+      kind: group.kind,
+      systems: group.systems
+    };
+
+    return (
+      <details class="ag-trace__group" name="trace">
+        <summary class="ag-trace__summary">
+          {rows.map((row) => (
+            <span class:list={['ag-trace__row', { 'ag-trace__row--group': row.group, 'ag-trace__row--now': !row.end }]}>
+              <span class="ag-trace__frame">
+                <span class="ag-trace__tree" aria-hidden="true">
+                  {row.tree}
+                </span>
+                <span class="ag-trace__name">{row.name}</span>
+                {row.place && <span class="ag-trace__place">({row.place})</span>}
+                <span class="ag-trace__dur">{formatDuration(row.start, row.end)}</span>
+              </span>
+              <Lane start={row.start} end={row.end} years={years} study={study} thin={!row.group} />
+            </span>
+          ))}
+        </summary>
+        <div class="ag-trace__detail">
+          <div class="ag-trace__body">
+            <FactGrid facts={facts} />
+            <p class="ag-trace__context">{group.context}</p>
+            {groupDocs.length > 0 && (
+              <div class="ag-trace__docs">
+                <span class="ag-label">docs from here</span>
+                <ul class="ag-postlist">
+                  {groupDocs.map((doc) => (
+                    <PostRow doc={doc} year />
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </details>
+    );
+  })}
+</div>

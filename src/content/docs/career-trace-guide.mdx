@@ -1,0 +1,31 @@
+---
+kind: note
+title: Modeling career history as a stack trace
+date: 2025-06-12
+dek: How src/data/trace.ts drives both the home timeline and the expandable trace explorer.
+trace: northstar
+---
+
+## editing the trace
+
+All organizations, roles, and study periods live in `src/data/trace.ts`. Roles are ordered newest first; omitting `end` marks a role as current and highlights its lane in `--now` green:
+
+```ts
+{
+  id: 'acme',
+  name: 'acme systems',
+  place: 'san francisco, ca',
+  kind: 'work',
+  systems: 'go · kubernetes · postgres',
+  context: 'Short summary displayed when the group is expanded.',
+  roles: [{ name: 'staff systems engineer', start: '2024-03' }]
+}
+```
+
+## linking docs to periods
+
+Setting `trace: acme` in a doc's frontmatter attaches it to that organization's expanded drawer on `/trace` under `docs from here`. The content schema validates every `trace` reference against `TRACE` at build time so broken IDs fail early.
+
+## eight-year window
+
+Both the home page and `/trace` draw an eight-year span (`src/lib/trace.ts`), mapping each year to one of the eight content columns (`5–12`). Work spans render as filled ink bars while study spans render as outlined bars.

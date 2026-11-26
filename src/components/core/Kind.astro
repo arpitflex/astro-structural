@@ -1,0 +1,17 @@
+---
+import KindMark from '@components/core/KindMark.astro';
+import { KINDS, type DocKind } from '@lib/docs';
+
+/** A doc's kind: the glyph and its word. */
+interface Props {
+  kind: DocKind;
+  class?: string;
+}
+
+const { kind, class: className } = Astro.props;
+---
+
+<span class:list={['ag-kind', className]}>
+  <KindMark kind={kind} />
+  {KINDS[kind].one}
+</span>

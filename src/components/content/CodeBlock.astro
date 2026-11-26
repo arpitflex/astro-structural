@@ -1,0 +1,43 @@
+---
+/**
+ * Stands in for <pre> when a doc renders: <Content components={{ pre: CodeBlock }} />.
+ * Shiki has already highlighted the code; this adds the language and a copy button.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'pre'> & { 'data-language'?: string };
+
+const { 'data-language': language, ...rest } = Astro.props;
+---
+
+<figure class="ag-codeblock">
+  <figcaption class="ag-codeblock__head">
+    <span>{language}</span>
+    <button type="button" class="ag-codeblock__copy">
+      copy
+    </button>
+  </figcaption>
+  <pre {...rest}><slot /></pre>
+</figure>
+
+<script>
+  for (const block of document.querySelectorAll('.ag-codeblock')) {
+    const button = block.querySelector<HTMLButtonElement>('.ag-codeblock__copy');
+    const code = block.querySelector('pre')?.textContent;
+    if (!button || code == null) continue;
+
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+      } catch {
+        return;
+      }
+      button.textContent = 'copied';
+      button.dataset.copied = '';
+      setTimeout(() => {
+        button.textContent = 'copy';
+        delete button.dataset.copied;
+      }, 1500);
+    });
+  }
+</script>

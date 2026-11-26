@@ -1,0 +1,36 @@
+<!-- @dsCard group="Grid" viewport="700x220" name="12 columns, zero gutter" subtitle="Columns drawn as 7% hairlines; text starts 8px right of a line" -->
+<!doctype html>
+<html class="ag" lang="en">
+<head>
+<meta charset="utf-8">
+<title>12 columns</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="ag-page">
+  <div class="ag-page__grid">
+    <div class="ag-row" style="border-top: var(--rule-section); padding-top: var(--gap-rule)">
+      <span class="ag-meta-text" style="padding-left: var(--inset)">1</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">2</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">3</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">4</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">5</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">6</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">7</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">8</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">9</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">10</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">11</span>
+      <span class="ag-meta-text" style="padding-left: var(--inset)">12</span>
+    </div>
+    <div class="ag-row" style="margin-top: 32px">
+      <div class="ag-label" style="grid-column: var(--col-label); height: 96px; padding-left: var(--inset); background: var(--hover)">label · 1–4</div>
+      <div class="ag-label" style="grid-column: var(--col-content); height: 96px; padding-left: var(--inset); background: var(--selection)">content · 5–12</div>
+    </div>
+    <div class="ag-row" style="margin-top: var(--gap-rule)">
+      <div class="ag-meta-text" style="grid-column: 5 / 12; height: 24px; padding-left: var(--inset); background: var(--hover)">prose · 64ch, stops near 11</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!-- @dsCard group="Grid" viewport="700x220" name="Vertical rhythm" subtitle="8px unit; few, large steps" -->
+<!doctype html>
+<html class="ag" lang="en">
+<head>
+<meta charset="utf-8">
+<title>vertical rhythm</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="ag-page" style="display: grid; gap: 10px">
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-rule · 8</span>
+    <div style="height: 10px; width: calc(var(--gap-rule) * 3); background: var(--fg-1)"></div>
+  </div>
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-row · 16</span>
+    <div style="height: 10px; width: calc(var(--gap-row) * 3); background: var(--fg-1)"></div>
+  </div>
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-block · 24</span>
+    <div style="height: 10px; width: calc(var(--gap-block) * 3); background: var(--fg-1)"></div>
+  </div>
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-tile · 40</span>
+    <div style="height: 10px; width: calc(var(--gap-tile) * 3); background: var(--fg-1)"></div>
+  </div>
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-hero · 72</span>
+    <div style="height: 10px; width: calc(var(--gap-hero) * 3); background: var(--fg-1)"></div>
+  </div>
+  <div style="display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: center">
+    <span class="ag-meta-text">gap-section · 120</span>
+    <div style="height: 10px; width: calc(var(--gap-section) * 3); background: var(--fg-1)"></div>
+  </div>
+</div>
+</body>
+</html>

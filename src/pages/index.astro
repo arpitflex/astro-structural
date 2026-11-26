@@ -1,0 +1,66 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/layout/Section.astro';
+import NameMark from '@components/navigation/NameMark.astro';
+import ArrowLink from '@components/core/ArrowLink.astro';
+import PostTile from '@components/content/PostTile.astro';
+import CommitField from '@components/data/CommitField.astro';
+import TraceTimeline from '@components/data/TraceTimeline.astro';
+import TraceYears from '@components/data/TraceYears.astro';
+import { ABOUT } from '@data/about';
+import { SITE } from '@data/site';
+import { TRACE } from '@data/trace';
+import { traceWindow } from '@lib/trace';
+import { getDocs } from '@lib/docs';
+import { getContributionLevels } from '@lib/github';
+
+/** Tile widths for the newest docs, by how many there are; each full row adds up to twelve columns. */
+function tileSpans(count: number): (3 | 6)[] {
+  if (count >= 6) return [6, 3, 3, 3, 3, 6];
+  if (count === 5) return [6, 3, 3, 6, 6];
+  if (count === 3) return [6, 3, 3];
+  return Array<6>(count).fill(6);
+}
+
+const levels = await getContributionLevels(SITE.githubUsers);
+const docs = await getDocs();
+const spans = tileSpans(docs.length);
+const latest = docs.slice(0, spans.length);
+const years = traceWindow();
+---
+
+<Layout>
+  <NameMark>{SITE.name}</NameMark>
+
+  {levels && <CommitField levels={levels} />}
+
+  {ABOUT.homeStatement && (
+    <Section label="about" statement>
+      {ABOUT.homeStatement}
+      <ArrowLink slot="foot" href="/about">
+        more about me
+      </ArrowLink>
+    </Section>
+  )}
+
+  {latest.length > 0 && (
+    <Section label="docs" layout="full">
+      <ArrowLink slot="action" href="/docs">
+        all docs
+      </ArrowLink>
+      {latest.map((doc, i) => (
+        <PostTile doc={doc} span={spans[i]} />
+      ))}
+    </Section>
+  )}
+
+  {TRACE.length > 0 && (
+    <Section label="trace" layout="full">
+      <TraceYears slot="aside" years={years} />
+      <TraceTimeline years={years} />
+      <ArrowLink slot="foot" href="/trace">
+        full trace
+      </ArrowLink>
+    </Section>
+  )}
+</Layout>

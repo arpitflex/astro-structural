@@ -1,0 +1,266 @@
+/* Component classes (ag-*). Every measurement comes from tokens.
+   Mono text is always the pair: font: var(--type-mono); font-stretch: var(--wdth-mono). */
+
+/* ── core ── */
+.ag-label { font: var(--type-label); font-stretch: var(--wdth-mono); color: var(--fg-1); }
+.ag-meta-text { font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+.ag-link { display: inline-flex; gap: var(--gap-inline); font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-1); transition: color var(--dur) var(--ease); }
+.ag-link:hover { color: var(--fg-3); }
+.ag-link--quiet { color: var(--fg-3); }
+.ag-link--quiet:hover { color: var(--fg-1); }
+/* Text buttons: the theme switcher, the doc filter, the copy button. Grey at rest, ink on hover or when pressed.
+   Declared before .ag-kind so the filter keeps its mono face over font: inherit. */
+.ag-meta__theme button, .ag-filter__opt, .ag-codeblock__copy { padding: 0; border: 0; background: none; font: inherit; color: var(--fg-3); cursor: pointer; transition: color var(--dur) var(--ease); }
+.ag-meta__theme button:hover, .ag-meta__theme button[aria-pressed="true"], .ag-filter__opt:hover, .ag-filter__opt[aria-pressed="true"], .ag-codeblock__copy:hover { color: var(--fg-1); }
+/* Lists of rows: the elsewhere links, the post rows. */
+.ag-linklist, .ag-postlist { display: grid; padding: 0; list-style: none; }
+.ag-now { display: inline-block; flex: none; width: var(--mark); height: var(--mark); background: var(--now); }
+/* A doc's kind: the glyph and its word, inline. */
+.ag-kind { display: inline-flex; gap: var(--gap-inline); align-items: baseline; font: var(--type-mono); font-stretch: var(--wdth-mono); white-space: nowrap; }
+.ag-kind-mark { display: inline-flex; flex: none; align-self: center; }
+.ag-kind-mark svg { display: block; }
+.ag-filter { display: flex; flex-wrap: wrap; gap: var(--gap-rule) var(--gap-block); padding-left: var(--inset); }
+.ag-filter__opt { padding-bottom: var(--gap-tight); border-bottom: var(--rule-section); border-bottom-color: transparent; }
+.ag-filter__opt[aria-pressed="true"] { border-bottom-color: var(--line-section); }
+.ag-filter__count { color: var(--fg-4); }
+
+/* ── layout ── */
+.ag-skip-link { position: absolute; top: var(--gap-rule); left: var(--page-margin); z-index: 1; padding: var(--gap-rule) var(--inset); border: 1px solid var(--line-section); background: var(--bg); font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-1); transform: translateY(calc(-100% - var(--gap-rule))); }
+.ag-skip-link:focus { transform: none; }
+.ag-page { box-sizing: border-box; max-width: var(--page-max); margin: 0 auto; padding: var(--page-pad) var(--page-margin); }
+.ag-page__grid { display: grid; grid-template-columns: var(--grid-cols); border-right: 1px solid var(--line-grid); background-image: var(--grid-lines); }
+.ag-page__main { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); }
+.ag-row { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); }
+
+/* The section: a 2px rule, the label in columns 1–4, content in 5–12. Every block on every page is one. */
+.ag-section { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); margin-top: var(--gap-section); }
+.ag-section__head { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); border-top: var(--rule-section); padding-top: var(--gap-rule); }
+.ag-section__label { grid-column: var(--col-label); display: flex; gap: var(--gap-inline); align-items: center; align-self: start; padding-left: var(--inset); font: var(--type-label); font-stretch: var(--wdth-mono); }
+.ag-section__statement { padding: 0 var(--inset); font: var(--type-lead); text-wrap: pretty; }
+.ag-section__aside { grid-column: var(--col-content); min-width: 0; }
+/* Calls to action: __action in the head at columns 10–12 (full layout), __foot under the content on column 5. */
+.ag-section__action { grid-column: 10 / 13; padding-left: var(--inset); }
+.ag-section__grid { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); }
+.ag-section__foot { grid-column: var(--col-content); margin-top: var(--gap-block); padding-left: var(--inset); }
+/* The content column is a subgrid of the page's eight content columns. Children run line to line unless
+   they are prose, which stops at --col-prose, so every rule inside (code, tables, the timeline) ends on a column line. */
+.ag-section__body, .ag-posthead__body, .ag-trace__body { grid-column: var(--col-content); display: grid; grid-template-columns: subgrid; row-gap: var(--gap-block); align-content: start; min-width: 0; }
+:is(.ag-section__body, .ag-posthead__body, .ag-trace__body) > * { grid-column: var(--col-full); min-width: 0; }
+:is(.ag-section__body, .ag-posthead__body, .ag-trace__body) > .ag-prose { grid-column: var(--col-prose); }
+@media (max-width: 760px) {
+  .ag-section__label, .ag-section__body, .ag-section__action, .ag-section__foot { grid-column: var(--col-full); }
+  .ag-section__body { margin-top: var(--gap-block); }
+  .ag-section__action { margin-top: var(--gap-rule); }
+  .ag-section__aside { display: none; }
+  :is(.ag-section__body, .ag-posthead__body, .ag-trace__body) > .ag-prose { grid-column: var(--col-full); }
+}
+/* Key-value rows: eight-column rows for the elsewhere links. Rows close with a hairline. */
+.ag-linkrow { display: grid; grid-template-columns: var(--grid-cols-content); align-items: center; min-height: var(--row-h); border-bottom: var(--rule-row); font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-1); transition: background var(--dur) var(--ease); }
+.ag-linkrow:hover { background: var(--hover); }
+.ag-linkrow__k { grid-column: 1 / 3; padding-left: var(--inset); color: var(--fg-3); }
+.ag-linkrow__v { grid-column: 3 / -1; display: flex; gap: var(--gap-inline); padding: 0 var(--inset); }
+@media (max-width: 760px) {
+  .ag-linkrow { grid-template-columns: var(--grid-cols); }
+  .ag-linkrow__k { grid-column: 1 / 4; }
+  .ag-linkrow__v { grid-column: 4 / -1; }
+}
+
+/* ── navigation ── */
+.ag-meta { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); align-items: baseline; row-gap: var(--gap-row); border-top: var(--rule-section); padding-top: var(--gap-rule); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-meta__id { grid-column: var(--col-label); grid-row: 1; padding-left: var(--inset); color: var(--fg-1); }
+.ag-meta__id--role { color: var(--fg-3); }
+.ag-meta__nav { grid-column: 5 / 9; grid-row: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ag-meta__nav a { padding-left: var(--inset); color: var(--fg-3); white-space: nowrap; transition: color var(--dur) var(--ease); }
+.ag-meta__nav a:hover, .ag-meta__nav a[aria-current="page"] { color: var(--fg-1); }
+.ag-meta__theme { grid-column: 9 / 13; grid-row: 1; display: flex; justify-content: flex-end; gap: var(--gap-row); padding-right: var(--inset); }
+/* Under 600px the bar is two rows: identity and theme share row 1, the nav moves to row 2 under the
+   identity. The same four-track subgrid over eight columns puts a link on every other column line. */
+@media (max-width: 600px) {
+  .ag-meta__id { grid-column: 1 / 9; }
+  .ag-meta__theme { grid-column: 9 / 13; }
+  .ag-meta__nav { grid-column: 1 / 9; grid-row: 2; }
+}
+.ag-name { grid-column: var(--col-full); margin-top: var(--gap-hero); padding-left: calc(var(--inset) - var(--name-bearing)); font: var(--type-name); font-stretch: var(--wdth-name); color: var(--fg-1); overflow-wrap: anywhere; }
+.ag-footer { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); row-gap: var(--gap-row); margin-top: var(--gap-section); border-top: var(--rule-section); padding-top: var(--gap-rule); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-footer__left { grid-column: var(--col-label); padding-left: var(--inset); color: var(--fg-3); }
+.ag-footer__links { grid-column: 5 / 9; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+.ag-footer__links a { padding-left: var(--inset); white-space: nowrap; }
+.ag-footer__contact { grid-column: 9 / 13; display: flex; justify-content: flex-end; padding-right: var(--inset); }
+/* Same two rows as the meta bar: year and email share row 1, the links move to row 2 over eight columns. */
+@media (max-width: 600px) {
+  .ag-footer__contact { grid-column: 5 / 13; }
+  .ag-footer__links { grid-column: 1 / 9; grid-row: 2; }
+}
+
+/* ── content ── */
+/* Tiles: an item rule and a grid span, nothing else. Rows of tiles add up to twelve columns. */
+.ag-tile { grid-column: span 3; display: flex; flex-direction: column; justify-content: space-between; gap: var(--gap-tile); min-width: 0; margin-top: var(--gap-tile); padding: var(--gap-rule) var(--inset) 0; border-top: var(--rule-item); color: var(--fg-1); transition: background var(--dur) var(--ease); }
+.ag-tile:hover { background: var(--hover); }
+.ag-tile__top { display: flex; justify-content: space-between; gap: var(--gap-row); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-tile__read { color: var(--fg-3); }
+.ag-tile__title { font: var(--type-title); text-wrap: balance; }
+.ag-tile--wide { grid-column: span 6; }
+.ag-tile--wide .ag-tile__title { font: var(--type-title-l); }
+.ag-tile__date { font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+@media (max-width: 760px) {
+  .ag-tile, .ag-tile--wide { grid-column: var(--col-full); }
+  .ag-tile--wide .ag-tile__title { font: var(--type-title); }
+}
+/* Post rows: eight-column rows, closed with a hairline like every other row. */
+.ag-postrow { display: grid; grid-template-columns: var(--grid-cols-content); align-items: baseline; padding: var(--gap-row) 0; border-bottom: var(--rule-row); color: var(--fg-1); transition: background var(--dur) var(--ease); }
+.ag-postrow:hover { background: var(--hover); }
+.ag-postrow > * { padding-left: var(--inset); }
+.ag-postrow__date { grid-column: 1 / 2; font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+.ag-postrow__type { grid-column: 2 / 4; }
+.ag-postrow__title { grid-column: 4 / 9; padding-right: var(--inset); font: var(--type-title-s); text-wrap: balance; }
+@media (max-width: 760px) {
+  .ag-postrow { grid-template-columns: var(--grid-cols); row-gap: var(--gap-tight); }
+  .ag-postrow__type { grid-column: 1 / 9; grid-row: 1; }
+  .ag-postrow__date { grid-column: 9 / 13; grid-row: 1; padding-right: var(--inset); text-align: right; }
+  .ag-postrow__title { grid-column: var(--col-full); grid-row: 2; }
+}
+/* Doc header: the meta in the label column, title and dek in the content column. */
+.ag-article { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); }
+.ag-posthead { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); row-gap: var(--gap-block); margin-top: var(--gap-hero); }
+.ag-posthead__meta { grid-column: var(--col-label); display: grid; gap: var(--gap-tight); align-content: start; justify-items: start; padding-left: var(--inset); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-posthead__back { margin-bottom: var(--gap-row); }
+.ag-posthead__type { font-weight: var(--fw-mono-strong); color: var(--fg-1); }
+.ag-posthead__sub { color: var(--fg-3); }
+.ag-posthead__title { padding: 0 var(--inset); font: var(--type-h1); color: var(--fg-1); text-wrap: balance; }
+.ag-posthead__dek { padding: 0 var(--inset); font: var(--type-lead); color: var(--fg-2); text-wrap: pretty; }
+@media (max-width: 760px) { .ag-posthead__meta, .ag-posthead__body { grid-column: var(--col-full); } }
+/* Facts: four cells of two columns each; two of six under 600px. */
+.ag-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--rule-item); }
+.ag-facts__cell { display: grid; gap: var(--gap-tight); align-content: start; min-width: 0; padding: var(--gap-rule) var(--inset) var(--gap-row); border-bottom: var(--rule-row); }
+.ag-facts__k { font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+.ag-facts__v { display: flex; gap: var(--gap-inline); align-items: center; font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-1); }
+@media (max-width: 600px) { .ag-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Prose: a subgrid of the prose columns. Text blocks are inset; rules (hr, tables, quotes, code, the timeline) run line to line. */
+.ag-prose { display: grid; grid-template-columns: subgrid; row-gap: var(--gap-block); font: var(--type-body); }
+.ag-prose > * { grid-column: var(--col-full); min-width: 0; }
+.ag-prose > :is(p, h3, h4) { padding: 0 var(--inset); text-wrap: pretty; }
+.ag-prose > :is(ul, ol) { display: grid; row-gap: var(--gap-rule); padding: 0 var(--inset) 0 var(--gap-block); text-wrap: pretty; }
+.ag-prose h3 { margin-top: var(--gap-row); font: var(--type-title-s); text-wrap: balance; }
+.ag-prose h4 { font: var(--type-label); font-stretch: var(--wdth-mono); }
+.ag-prose hr { border: 0; border-top: var(--rule-row); }
+.ag-prose blockquote { display: grid; row-gap: var(--gap-block); border-left: var(--rule-section); padding-left: var(--gap-block); font: var(--type-lead); text-wrap: pretty; }
+.ag-prose strong { font-weight: var(--fw-strong); }
+.ag-prose a { color: var(--fg-1); text-decoration: underline; text-decoration-color: var(--fg-3); text-decoration-thickness: 1px; text-underline-offset: var(--underline-offset); transition: color var(--dur) var(--ease), text-decoration-color var(--dur) var(--ease); }
+.ag-prose a:hover { color: var(--fg-3); text-decoration-color: var(--fg-1); }
+.ag-prose table { width: 100%; border-collapse: collapse; border-top: var(--rule-item); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-prose :is(th, td) { padding: var(--gap-rule) var(--inset); border-bottom: var(--rule-row); text-align: left; vertical-align: top; }
+.ag-prose th { font-weight: var(--fw-mono-strong); }
+.ag-prose td { color: var(--fg-2); }
+/* Timeline: nodes hang on the column line between the time and the event, so the grid is the spine. */
+.ag-timeline { display: grid; grid-template-columns: subgrid; padding: 0; list-style: none; }
+.ag-timeline__item { grid-column: var(--col-full); display: grid; grid-template-columns: subgrid; }
+.ag-timeline__time { grid-column: 1; display: grid; justify-items: end; align-content: start; padding-right: var(--inset); font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); text-align: right; }
+.ag-timeline__delta { font: var(--type-micro); font-stretch: var(--wdth-mono); color: var(--fg-4); }
+.ag-timeline__content { grid-column: 2 / -1; position: relative; display: grid; row-gap: var(--gap-tight); align-content: start; padding: 0 var(--inset) var(--gap-block); }
+.ag-timeline__item:last-child .ag-timeline__content { padding-bottom: 0; }
+.ag-timeline__node { position: absolute; top: calc((var(--lh-mono) - var(--mark)) / 2); left: 0; box-sizing: border-box; width: var(--mark); height: var(--mark); border: 1px solid var(--fg-3); background: var(--bg); transform: translateX(-50%); }
+.ag-timeline__item--resolved .ag-timeline__node { border-color: var(--now); background: var(--now); }
+.ag-timeline__tag { justify-self: start; font: var(--type-micro); font-stretch: var(--wdth-mono); color: var(--fg-3); text-decoration: underline; text-decoration-color: var(--line-row); text-decoration-thickness: 1px; text-underline-offset: var(--underline-offset); }
+.ag-timeline__desc { font: var(--type-body); color: var(--fg-1); }
+.ag-timeline__item--resolved .ag-timeline__desc { font-weight: var(--fw-strong); }
+/* Under 760px the time takes a row above the event and the nodes hang on the first column line. */
+@media (max-width: 760px) {
+  .ag-timeline__time { grid-column: var(--col-full); display: flex; gap: var(--gap-inline); align-items: baseline; padding: 0 var(--inset); text-align: left; }
+  .ag-timeline__content { grid-column: var(--col-full); }
+  .ag-timeline__node { top: calc((var(--lh-micro) - var(--mark)) / 2); }
+}
+/* Code: a Markdown fence between an item rule and a hairline, on bare paper. */
+.ag-codeblock { border-top: var(--rule-item); border-bottom: var(--rule-row); }
+.ag-codeblock__head { display: flex; justify-content: space-between; align-items: baseline; padding: var(--gap-rule) var(--inset); border-bottom: var(--rule-row); font: var(--type-micro); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+.ag-codeblock__copy[data-copied] { color: var(--now); }
+.ag-codeblock pre { padding: var(--gap-row) var(--inset); overflow-x: auto; font: var(--type-code); font-stretch: var(--wdth-mono); background: none; }
+.ag-codeblock code { font: inherit; font-stretch: inherit; }
+/* Shiki emits both themes as custom properties on every token; color-scheme picks one. */
+.astro-code, .astro-code span { color: light-dark(var(--shiki-light), var(--shiki-dark)); }
+
+/* ── data ── */
+/* Commit field: four weeks a page column, so 48 weeks fill the twelve columns. CommitField slices the days to match. */
+.ag-commits { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); row-gap: var(--gap-rule); margin-top: var(--gap-tile); }
+.ag-commits__field { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); }
+.ag-commits__col { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--commit-gap); padding-left: var(--commit-gap); }
+.ag-commits__cell { aspect-ratio: 1; background: var(--heat-0); }
+.ag-commits__cell[data-l="1"] { background: var(--heat-1); }
+.ag-commits__cell[data-l="2"] { background: var(--heat-2); }
+.ag-commits__cell[data-l="3"] { background: var(--heat-3); }
+.ag-commits__cell[data-l="4"] { background: var(--heat-4); }
+.ag-commits__cell[data-today] { background: var(--now); }
+.ag-commits__caption { grid-column: var(--col-full); display: grid; grid-template-columns: var(--grid-cols); font: var(--type-micro); font-stretch: var(--wdth-mono); color: var(--fg-4); }
+.ag-commits__caption > :first-child,
+.ag-commits__range { grid-column: var(--col-label); padding-left: var(--inset); }
+.ag-commits__caption > :last-child { grid-column: 12 / 13; padding-right: var(--commit-gap); text-align: right; }
+.ag-commits__range { display: none; }
+.ag-commits__range--48 { display: inline; }
+@media (max-width: 760px) {
+  .ag-commits__col:nth-child(-n+6) { display: none; }
+  .ag-commits__col { grid-column: span 2; }
+  .ag-commits__caption > :first-child,
+  .ag-commits__range { grid-column: 1 / 9; }
+  .ag-commits__range--48 { display: none; }
+  .ag-commits__range--24 { display: inline; }
+}
+@media (max-width: 600px) {
+  .ag-commits__col:nth-child(-n+9) { display: none; }
+  .ag-commits__col { grid-column: span 4; }
+  .ag-commits__range--24 { display: none; }
+  .ag-commits__range--12 { display: inline; }
+}
+
+/* Lanes: a span of years drawn as a bar. --from and --to are percentages of the window. Filled = work, outlined = study, green = current. */
+.ag-lane { position: relative; height: var(--lane); }
+.ag-lane--thin { height: var(--mark); }
+.ag-lane__span { position: absolute; top: 0; bottom: 0; left: var(--from); width: calc(var(--to) - var(--from)); box-sizing: border-box; border: var(--rule-item); background: var(--fg-1); }
+.ag-lane__span--edu { background: transparent; }
+.ag-lane__span--now { border-color: var(--now); background: var(--now); }
+
+/* Trace: the window is always 8 years, one page column each. Home draws one row per role; the trace page reads like a
+   stack trace, one <details> per organisation (name="trace" keeps a single frame open) with roles nested inside. */
+.ag-trace { grid-column: var(--col-full); display: grid; }
+.ag-trace__years { display: grid; grid-template-columns: var(--grid-cols-content); font: var(--type-mono); font-stretch: var(--wdth-mono); color: var(--fg-3); }
+.ag-trace__years > span { padding-left: var(--inset); }
+.ag-trace__summary { display: block; list-style: none; cursor: pointer; transition: background var(--dur) var(--ease); }
+.ag-trace__summary::-webkit-details-marker { display: none; }
+.ag-trace__summary:hover, .ag-trace__group[open] > .ag-trace__summary { background: var(--hover); }
+.ag-trace__row { display: grid; grid-template-columns: var(--grid-cols); align-items: center; min-height: var(--row-h); border-bottom: var(--rule-row); }
+.ag-trace__frame { grid-column: var(--col-label); display: flex; gap: var(--gap-inline); align-items: baseline; min-width: 0; padding: 0 var(--inset); font: var(--type-mono); font-stretch: var(--wdth-mono); }
+.ag-trace__tree { color: var(--fg-4); white-space: pre; }
+.ag-trace__name, .ag-trace__place { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ag-trace__name { color: var(--fg-2); }
+.ag-trace__row--group .ag-trace__name { font-weight: var(--fw-mono-strong); color: var(--fg-1); }
+.ag-trace__row--now .ag-trace__name { color: var(--fg-1); }
+.ag-trace__place { color: var(--fg-3); }
+.ag-trace__dur { margin-left: auto; color: var(--fg-3); white-space: nowrap; }
+.ag-trace__row > .ag-lane { grid-column: var(--col-content); }
+.ag-trace__detail { display: grid; grid-template-columns: var(--grid-cols); padding: var(--gap-block) 0 var(--gap-tile); border-bottom: var(--rule-item); }
+.ag-trace__context { padding: 0 var(--inset); font: var(--type-lead); text-wrap: pretty; }
+.ag-trace__docs { display: grid; }
+.ag-trace__docs > .ag-label { padding: 0 0 var(--gap-rule) var(--inset); border-bottom: var(--rule-item); }
+/* Under 760px the frame takes a row and the lane the next, over eight columns so a year is still one column. */
+@media (max-width: 760px) {
+  .ag-trace__row { padding: var(--gap-rule) 0; row-gap: var(--gap-rule); }
+  .ag-trace__frame, .ag-trace__body { grid-column: var(--col-full); }
+  .ag-trace__row > .ag-lane { grid-column: 1 / 9; }
+}
+
+/* ── motion ── */
+/* Pages swap with a short structural settle and no bounce, using the browser's own
+   cross-document view transitions. The meta bar keeps its place and only crossfades. */
+@view-transition { navigation: auto; }
+.ag-meta { view-transition-name: ag-meta; }
+::view-transition-old(root), ::view-transition-old(ag-meta) { animation: var(--dur) var(--ease) both ag-fade-out; }
+::view-transition-new(root) { animation: var(--dur-swap) var(--ease-settle) both ag-settle-in; }
+::view-transition-new(ag-meta) { animation: var(--dur) var(--ease) both ag-fade-in; }
+/* Theme swaps dissolve in place, meta bar included. The switcher holds this class for the duration of the transition. */
+html.theme-transitioning::view-transition-old(root), html.theme-transitioning::view-transition-old(ag-meta) { animation: var(--dur-swap) var(--ease) both ag-fade-out; }
+html.theme-transitioning::view-transition-new(root), html.theme-transitioning::view-transition-new(ag-meta) { animation: var(--dur-swap) var(--ease) both ag-fade-in; }
+@keyframes ag-settle-in { from { opacity: 0; transform: translateY(var(--gap-tight)); } }
+@keyframes ag-fade-out { to { opacity: 0; } }
+@keyframes ag-fade-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}

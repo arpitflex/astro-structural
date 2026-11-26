@@ -1,0 +1,49 @@
+---
+import type { DocKind } from '@lib/docs';
+
+interface Props {
+  kind: DocKind | 'all';
+}
+
+const { kind } = Astro.props;
+---
+
+<span class="ag-kind-mark" aria-hidden="true">
+  <svg
+    width="10"
+    height="10"
+    viewBox="0 0 10 10"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1"
+    stroke-linecap="square"
+  >
+    {kind === 'pm' && (
+      <>
+        <rect x="0.6" y="0.6" width="8.8" height="8.8" />
+        <line x1="0.6" y1="9.4" x2="9.4" y2="0.6" />
+      </>
+    )}
+    {kind === 'adr' && (
+      <>
+        <line x1="2" y1="0.6" x2="2" y2="9.4" />
+        <path d="M2 5.5h3.5a2.5 2.5 0 0 0 2.5-2.5V0.6" />
+      </>
+    )}
+    {kind === 'note' && (
+      <>
+        <line x1="0.6" y1="2" x2="9.4" y2="2" />
+        <line x1="0.6" y1="5" x2="9.4" y2="5" />
+        <line x1="0.6" y1="8" x2="6" y2="8" />
+      </>
+    )}
+    {kind === 'all' && (
+      <>
+        <rect x="0.6" y="0.6" width="3.6" height="3.6" />
+        <rect x="5.8" y="0.6" width="3.6" height="3.6" />
+        <rect x="0.6" y="5.8" width="3.6" height="3.6" />
+        <rect x="5.8" y="5.8" width="3.6" height="3.6" />
+      </>
+    )}
+  </svg>
+</span>

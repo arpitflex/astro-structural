@@ -1,0 +1,26 @@
+---
+import ArrowLink from '@components/core/ArrowLink.astro';
+import { SITE } from '@data/site';
+
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="ag-footer">
+  <span class="ag-footer__left">{year}</span>
+  {SITE.socials.length > 0 && (
+    <nav class="ag-footer__links" aria-label="elsewhere">
+      {SITE.socials.map((social) => (
+        <ArrowLink href={social.url} external rel="me">
+          {social.label}
+        </ArrowLink>
+      ))}
+    </nav>
+  )}
+  {SITE.email && (
+    <div class="ag-footer__contact">
+      <a class="ag-link" href={`mailto:${SITE.email}`}>
+        {SITE.email}
+      </a>
+    </div>
+  )}
+</footer>

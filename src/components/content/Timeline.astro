@@ -1,0 +1,26 @@
+---
+import type { TimelineEvent } from '@lib/docs';
+
+/** An incident chronology. Nodes hang on the column line between the time and the event. */
+interface Props {
+  events: TimelineEvent[];
+}
+
+const { events } = Astro.props;
+---
+
+<ol class="ag-timeline">
+  {events.map((event) => (
+    <li class:list={['ag-timeline__item', { 'ag-timeline__item--resolved': event.resolved }]}>
+      <div class="ag-timeline__time">
+        <span>{event.time}</span>
+        {event.delta && <span class="ag-timeline__delta">{event.delta}</span>}
+      </div>
+      <div class="ag-timeline__content">
+        <span class="ag-timeline__node" aria-hidden="true" />
+        {event.tag && <span class="ag-timeline__tag">{event.tag}</span>}
+        <div class="ag-timeline__desc">{event.text}</div>
+      </div>
+    </li>
+  ))}
+</ol>

@@ -1,0 +1,32 @@
+---
+import Lane from '@components/data/Lane.astro';
+import { TRACE } from '@data/trace';
+import type { TraceWindow } from '@lib/trace';
+
+/** The home trace: one row per role, name in the label column, lane in the content column. */
+interface Props {
+  years: TraceWindow;
+}
+
+const { years } = Astro.props;
+
+const rows = TRACE.flatMap((group) =>
+  group.roles.map((role) => ({
+    name: `${group.name} — ${role.name}`,
+    study: group.kind === 'study',
+    start: role.start,
+    end: role.end
+  }))
+);
+---
+
+<div class="ag-trace">
+  {rows.map((row) => (
+    <div class:list={['ag-trace__row', { 'ag-trace__row--now': !row.end }]}>
+      <span class="ag-trace__frame">
+        <span class="ag-trace__name">{row.name}</span>
+      </span>
+      <Lane start={row.start} end={row.end} years={years} study={row.study} />
+    </div>
+  ))}
+</div>

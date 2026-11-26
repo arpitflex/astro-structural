@@ -1,0 +1,24 @@
+# build output
+dist/
+
+# generated types and content cache
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+*.log
+
+# local secrets (GITHUB_TOKEN for the commit field)
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# wrangler
+.wrangler/
+
+# editors and OS
+.idea/
+.DS_Store

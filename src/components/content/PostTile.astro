@@ -1,0 +1,22 @@
+---
+import Kind from '@components/core/Kind.astro';
+import { formatDate } from '@lib/dates';
+import { docHref, readingTime, type Doc } from '@lib/docs';
+
+interface Props {
+  doc: Doc;
+  /** Columns spanned. Rows always add up to twelve. */
+  span?: 3 | 6;
+}
+
+const { doc, span = 3 } = Astro.props;
+---
+
+<a href={docHref(doc)} class:list={['ag-tile', { 'ag-tile--wide': span === 6 }]}>
+  <span class="ag-tile__top">
+    <Kind kind={doc.data.kind} />
+    <span class="ag-tile__read">{readingTime(doc.body)}</span>
+  </span>
+  <span class="ag-tile__title">{doc.data.title}</span>
+  <span class="ag-tile__date">{formatDate(doc.data.date)}</span>
+</a>

@@ -1,0 +1,59 @@
+---
+kind: pm
+title: Queue backpressure during regional failover
+date: 2026-08-14
+dek: An illustrative post-mortem demonstrating header facts, incident timelines, and code blocks.
+trace: acme
+facts:
+  status: resolved
+  duration: 42m
+  impact: elevated p99 latency
+  systems: router · worker pool
+timeline:
+  - {
+      time: '14:02',
+      delta: '+00:00',
+      tag: trigger,
+      text: Primary zone health checks fail and traffic shifts to secondary capacity
+    }
+  - {
+      time: '14:09',
+      delta: '+07:00',
+      tag: symptom,
+      text: Worker queue depth crosses threshold as retry storms amplify load
+    }
+  - {
+      time: '14:21',
+      delta: '+19:00',
+      tag: mitigation,
+      text: Admission limiter enabled at router edge to cap in-flight requests
+    }
+  - { time: '14:44', delta: '+42:00', resolved: true, text: Queue drains and p99 latency returns to baseline }
+---
+
+import Timeline from '@components/content/Timeline.astro';
+
+## summary
+
+This sample document shows how `pm` entries format incident metadata and chronologies. Replace the sample `src/content/docs/*.mdx` files with your own notes, post-mortems, and architecture decision records.
+
+> Retries without an explicit deadline or concurrency budget turn partial capacity loss into a self-inflicted overload.
+
+## timeline
+
+<Timeline events={frontmatter.timeline} />
+
+## remediation
+
+Capping per-route queue depth and failing fast when the shared request budget expires prevents retry amplification:
+
+```ts
+export function shouldAdmit(inFlight: number, maxInFlight: number, remainingMs: number): boolean {
+  return remainingMs > 50 && inFlight < maxInFlight;
+}
+```
+
+## follow-ups
+
+- Enforce a single end-to-end deadline header across caller and worker hops.
+- Alert on queue wait time in addition to error rate so backpressure surfaces early.

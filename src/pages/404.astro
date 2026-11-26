@@ -1,0 +1,17 @@
+---
+import Layout from '@layouts/Layout.astro';
+import Section from '@components/layout/Section.astro';
+import NameMark from '@components/navigation/NameMark.astro';
+import ArrowLink from '@components/core/ArrowLink.astro';
+---
+
+<Layout title="404" description="Page not found.">
+  <NameMark>404</NameMark>
+
+  <Section label="status" statement>
+    The requested route does not exist or has moved.
+    <ArrowLink slot="foot" href="/">
+      return home
+    </ArrowLink>
+  </Section>
+</Layout>

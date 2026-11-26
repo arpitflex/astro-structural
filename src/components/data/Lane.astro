@@ -1,0 +1,24 @@
+---
+import type { Month } from '@data/trace';
+import { lane, type TraceWindow } from '@lib/trace';
+
+/** A span of years drawn as a bar: filled for work, outlined for study, green while current. */
+interface Props {
+  start: Month;
+  /** Left out while current: the lane runs to this month. */
+  end?: Month;
+  years: TraceWindow;
+  study?: boolean;
+  /** A role's lane is the height of the mark, not the full lane. */
+  thin?: boolean;
+}
+
+const { start, end, years, study = false, thin = false } = Astro.props;
+---
+
+<span class:list={['ag-lane', { 'ag-lane--thin': thin }]}>
+  <span
+    class:list={['ag-lane__span', { 'ag-lane__span--edu': study, 'ag-lane__span--now': !end }]}
+    style={lane(start, end, years)}
+  />
+</span>

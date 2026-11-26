@@ -1,0 +1,64 @@
+---
+import { render } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import ArrowLink from '@components/core/ArrowLink.astro';
+import Kind from '@components/core/Kind.astro';
+import FactGrid from '@components/content/FactGrid.astro';
+import CodeBlock from '@components/content/CodeBlock.astro';
+import { formatDate, isoDate } from '@lib/dates';
+import { getDocs, readingTime, type Doc } from '@lib/docs';
+import { personId } from '@lib/schema';
+
+export async function getStaticPaths() {
+  const docs = await getDocs();
+  return docs.map((doc) => ({ params: { id: doc.id }, props: { doc } }));
+}
+
+interface Props {
+  doc: Doc;
+}
+
+const { doc } = Astro.props;
+const { Content } = await render(doc);
+const { kind, title, dek, date, facts } = doc.data;
+
+const siteUrl = Astro.site ?? Astro.url;
+
+const schema = [
+  {
+    '@type': 'TechArticle',
+    '@id': `${Astro.url.href}#article`,
+    headline: title,
+    description: dek,
+    datePublished: isoDate(date),
+    author: { '@id': personId(siteUrl) },
+    mainEntityOfPage: Astro.url.href
+  }
+];
+---
+
+<Layout title={title} description={dek} type="article" schema={schema}>
+  <article class="ag-article">
+    <header class="ag-posthead">
+      <div class="ag-posthead__meta">
+        <div class="ag-posthead__back">
+          <ArrowLink href="/docs" back quiet>
+            docs
+          </ArrowLink>
+        </div>
+        <Kind kind={kind} class="ag-posthead__type" />
+        <time class="ag-posthead__sub" datetime={isoDate(date)}>
+          {formatDate(date)}
+        </time>
+        <span class="ag-posthead__sub">{readingTime(doc.body)}</span>
+      </div>
+      <div class="ag-posthead__body">
+        <h1 class="ag-posthead__title">{title}</h1>
+        <p class="ag-posthead__dek">{dek}</p>
+        {facts && <FactGrid facts={facts} />}
+      </div>
+    </header>
+
+    <Content components={{ pre: CodeBlock }} />
+  </article>
+</Layout>
