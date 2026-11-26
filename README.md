@@ -6,6 +6,16 @@ An open-source [Astro](https://astro.build) personal website and engineering log
 
 Built on a visible twelve-column CSS subgrid with zero client-side UI frameworks, `light-dark()` ink-on-paper theming, build-time Content Security Policy hashes, self-hosted variable fonts, and structured MDX content (`pm`, `adr`, `note`).
 
+## Preview
+
+| Home (light)                                               | Home (dark)                                              |
+| ---------------------------------------------------------- | -------------------------------------------------------- |
+| ![Home page in light theme](.github/assets/home-light.png) | ![Home page in dark theme](.github/assets/home-dark.png) |
+
+| Post-mortem (`pm` with `FactGrid` & `Timeline`)                         | Trace explorer (expanded stack frame)                                     |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| ![Sample post-mortem in dark theme](.github/assets/postmortem-dark.png) | ![Expanded trace explorer in light theme](.github/assets/trace-light.png) |
+
 ## Features
 
 - **Visible 12-column grid**: Every rule, label, prose block, code fence, table, and timeline aligns to CSS grid tracks (`design-system/`).
