@@ -30,6 +30,8 @@ export interface SiteConfig {
   email?: string;
   /** Optional GitHub usernames queried at build time (requires GITHUB_TOKEN) for the home commit field. */
   githubUsers: readonly string[];
+  /** Show a deterministic sample commit field when githubUsers is empty. Omit or set to false to hide. */
+  sampleCommits?: boolean;
   /** Social profiles rendered in the footer, /about elsewhere list, and schema.org sameAs. */
   socials: readonly SocialLink[];
   nav: readonly NavItem[];
@@ -49,6 +51,7 @@ export const SITE: SiteConfig = {
   description: `Personal website of Your Name, software engineer. ${tagline}`,
   email: 'hello@example.com',
   githubUsers: [],
+  sampleCommits: true,
   socials: [
     { label: 'github', value: 'your-handle', url: 'https://github.com/your-handle' },
     { label: 'linkedin', value: 'in/your-handle', url: 'https://linkedin.com/in/your-handle' }

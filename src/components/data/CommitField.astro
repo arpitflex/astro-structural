@@ -4,9 +4,11 @@ import type { Level } from '@lib/github';
 interface Props {
   /** One level (0–4) per day, oldest first. The last day is today. */
   levels: Level[];
+  /** Source prefix shown in the caption ('github' for live API data, 'activity' for the template sample). */
+  label?: string;
 }
 
-const { levels } = Astro.props;
+const { levels, label = 'github' } = Astro.props;
 
 /** Four weeks a page column, so 48 weeks fill the twelve columns; .ag-commits__col lays each column out four wide. */
 const perColumn = 4 * 7;
@@ -17,7 +19,11 @@ const today = levels.length - 1;
 ---
 
 <figure class="ag-commits">
-  <div class="ag-commits__field" role="img" aria-label="github contributions">
+  <div
+    class="ag-commits__field"
+    role="img"
+    aria-label={label === 'github' ? 'github contributions' : `${label}, past 48 weeks`}
+  >
     {columns.map((column, c) => (
       <div class="ag-commits__col">
         {column.map((level, i) => (
@@ -27,9 +33,9 @@ const today = levels.length - 1;
     ))}
   </div>
   <figcaption class="ag-commits__caption">
-    <span class="ag-commits__range ag-commits__range--48">github, past 48 weeks</span>
-    <span class="ag-commits__range ag-commits__range--24">github, past 24 weeks</span>
-    <span class="ag-commits__range ag-commits__range--12">github, past 12 weeks</span>
+    <span class="ag-commits__range ag-commits__range--48">{label}, past 48 weeks</span>
+    <span class="ag-commits__range ag-commits__range--24">{label}, past 24 weeks</span>
+    <span class="ag-commits__range ag-commits__range--12">{label}, past 12 weeks</span>
     <span>today</span>
   </figcaption>
 </figure>

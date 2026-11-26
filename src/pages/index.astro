@@ -22,7 +22,7 @@ function tileSpans(count: number): (3 | 6)[] {
   return Array<6>(count).fill(6);
 }
 
-const levels = await getContributionLevels(SITE.githubUsers);
+const commitField = await getContributionLevels(SITE.githubUsers, { sample: SITE.sampleCommits });
 const docs = await getDocs();
 const spans = tileSpans(docs.length);
 const latest = docs.slice(0, spans.length);
@@ -32,7 +32,7 @@ const years = traceWindow();
 <Layout>
   <NameMark>{SITE.name}</NameMark>
 
-  {levels && <CommitField levels={levels} />}
+  {commitField && <CommitField levels={commitField.levels} label={commitField.label} />}
 
   {ABOUT.homeStatement && (
     <Section label="about" statement>

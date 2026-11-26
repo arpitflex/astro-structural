@@ -58,7 +58,7 @@ export default defineConfig({
 
   env: {
     schema: {
-      // Read at build time to draw the commit field. Without it the field is left out.
+      // Read at build time to draw the live GitHub commit field when githubUsers is set.
       GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true })
     }
   }

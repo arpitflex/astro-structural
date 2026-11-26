@@ -6,6 +6,42 @@ const DAYS = WEEKS * 7;
 /** A day's contribution level, the five steps of --heat-0 to --heat-4. */
 export type Level = 0 | 1 | 2 | 3 | 4;
 
+export interface CommitFieldData {
+  levels: Level[];
+  /** Caption prefix: 'github' for live API data, 'activity' for the built-in template sample. */
+  label: 'github' | 'activity';
+}
+
+export interface CommitFieldOptions {
+  /** Render a deterministic sample grid when no GitHub users are configured. */
+  sample?: boolean;
+}
+
+/** Deterministic 48-week sample activity for the unconfigured template preview. */
+function sampleLevels(): Level[] {
+  return Array.from({ length: DAYS }, (_, day) => {
+    const week = Math.floor(day / 7);
+    const weekday = day % 7;
+    const isWeekend = weekday === 0 || weekday === 6;
+
+    // Deterministic hash combining day and week so the 48-week grid looks organic without repeating stripes.
+    let h = Math.imul(day + 17, 0x45d9f3b) ^ Math.imul(week + 31, 0x27d4eb2d);
+    h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+    const roll = ((h ^ (h >>> 13)) >>> 0) % 100;
+
+    // Periodic sprint bursts across weeks, lighter activity on weekends.
+    const burst = week % 11 >= 3 && week % 11 <= 6 ? 12 : 0;
+    const activeCutoff = (isWeekend ? 26 : 56) + burst;
+    if (roll >= activeCutoff) return 0;
+
+    const score = roll / activeCutoff;
+    if (score < 0.42) return 1;
+    if (score < 0.72) return 2;
+    if (score < 0.9) return 3;
+    return 4;
+  });
+}
+
 const QUERY = `
   query ($login: String!) {
     user(login: $login) {
@@ -65,16 +101,23 @@ async function fetchUserDays(login: string): Promise<ContributionDay[]> {
 
 /**
  * Contribution levels (0–4) for the past 48 weeks, oldest day first, ending today.
- * Combines contribution counts across one or more accounts and maps them to quartile levels.
- * Returns null without a token or when GitHub cannot be reached; the home page
- * then leaves the commit field out rather than show made-up activity.
+ * When `logins` is empty and `options.sample` is true, returns deterministic sample activity for the template.
+ * Once `logins` is configured, queries GitHub's GraphQL API across all accounts using `GITHUB_TOKEN`,
+ * returning null without a token or on fetch failure rather than showing synthetic activity for a real profile.
  */
-export async function getContributionLevels(logins: string | readonly string[]): Promise<Level[] | null> {
-  const userList = Array.isArray(logins) ? logins : [logins];
-  if (userList.length === 0) return null;
+export async function getContributionLevels(
+  logins: string | readonly string[],
+  options: CommitFieldOptions = {}
+): Promise<CommitFieldData | null> {
+  const userList = (Array.isArray(logins) ? logins : [logins]).map((login) => login.trim()).filter(Boolean);
+  if (userList.length === 0) {
+    return options.sample ? { levels: sampleLevels(), label: 'activity' } : null;
+  }
 
   if (!GITHUB_TOKEN) {
-    console.warn('[github] GITHUB_TOKEN is not set; leaving the commit field out');
+    console.warn(
+      `[github] GITHUB_TOKEN is not set; omitting the commit field for ${userList.join(', ')} (add GITHUB_TOKEN in .env or CI to enable)`
+    );
     return null;
   }
 
@@ -96,15 +139,18 @@ export async function getContributionLevels(logins: string | readonly string[]):
     const maxCount = Math.max(...recentCounts);
 
     if (maxCount === 0) {
-      return recentCounts.map(() => 0);
+      return { levels: recentCounts.map(() => 0), label: 'github' };
     }
 
     if (maxCount <= 4) {
-      return recentCounts.map((count) => Math.min(4, count) as Level);
+      return { levels: recentCounts.map((count) => Math.min(4, count) as Level), label: 'github' };
     }
 
     const step = maxCount / 4;
-    return recentCounts.map((count) => (count === 0 ? 0 : (Math.min(4, Math.ceil(count / step)) as Level)));
+    return {
+      levels: recentCounts.map((count) => (count === 0 ? 0 : (Math.min(4, Math.ceil(count / step)) as Level))),
+      label: 'github'
+    };
   } catch (error) {
     console.warn(`[github] ${error instanceof Error ? error.message : error}; leaving the commit field out`);
     return null;

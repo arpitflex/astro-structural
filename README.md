@@ -22,7 +22,7 @@ Built on a visible twelve-column CSS subgrid with zero client-side UI frameworks
 - **Zero client framework**: Static HTML/CSS with native cross-document `@view-transition` and three tiny inline behaviors (pre-paint theme switcher, `/docs` kind filter, code copy button).
 - **Engineering docs collection**: Type-checked MDX in `src/content/docs/` supporting post-mortems (`pm`), architecture decision records (`adr`), and notes (`note`), with automatic reading time, header `facts`, and `<Timeline />` chronologies.
 - **Career trace explorer**: Eight-year career/study bar timeline (`src/data/trace.ts`) with expandable organization drawers and linked documents (`trace: <id>`).
-- **Optional GitHub commit field**: Build-time 48-week contribution calendar aggregated across one or more GitHub accounts (`GITHUB_TOKEN`).
+- **Optional GitHub commit field**: Build-time 48-week contribution calendar aggregated across one or more GitHub accounts (`GITHUB_TOKEN`), with a built-in deterministic sample grid out of the box.
 - **SEO & security**: Generated `rss.xml`, `sitemap-index.xml`, `robots.txt`, JSON-LD (`Person`, `WebSite`, `TechArticle`, `CollectionPage`), and build-time CSP (`security.csp`).
 
 ## Quick start
@@ -48,7 +48,7 @@ Node 26 and pnpm 12 are pinned in `mise.toml` and `package.json` (`packageManage
 You can personalize the entire site by editing five places—no component or page template changes required:
 
 1. **`astro.config.mjs`**: Set `site` to your production URL (used for canonical URLs, RSS, sitemap, and `robots.txt`).
-2. **`src/data/site.ts`**: Update `name`, `fullName`, `role`, `jobTitle`, `company`, `tagline`, `description`, `email`, `socials` (any label/handle/URL list), `nav`, and optional `githubUsers`.
+2. **`src/data/site.ts`**: Update `name`, `fullName`, `role`, `jobTitle`, `company`, `tagline`, `description`, `email`, `socials` (any label/handle/URL list), `nav`, `githubUsers`, and `sampleCommits`.
 3. **`src/data/about.ts`**: Update `homeStatement`, `description`, `now`, `before` paragraphs, and `colophon`.
 4. **`src/data/trace.ts`**: Replace the sample work and study periods. Omit `end` on your current role to highlight it with `--now` green.
 5. **`src/content/docs/*.mdx`**: Replace the sample guide/example docs with your own post-mortems, ADRs, and notes.
@@ -85,13 +85,15 @@ Every `##` heading opens a section on the grid. Keep interface headings lowercas
 
 ## GitHub commit field (optional)
 
-To enable the 48-week contribution grid on the home page:
+Out of the box, `githubUsers: []` and `sampleCommits: true` in `src/data/site.ts` render a deterministic 48-week sample grid (`activity, past 48 weeks`) on the home page.
 
-1. Add one or more GitHub usernames to `githubUsers` in `src/data/site.ts`.
+To connect your own GitHub activity:
+
+1. Add one or more GitHub usernames to `githubUsers` in `src/data/site.ts` (this automatically disables the sample preview).
 2. Copy `.env.example` to `.env` and set `GITHUB_TOKEN` with public profile read access.
-3. Add `GITHUB_TOKEN` to your CI/deployment environment variables.
+3. Add `GITHUB_TOKEN` to your CI/deployment environment variables (in GitHub Actions, save a personal access token as `GH_TOKEN` in repository secrets since GitHub reserves the `GITHUB_` prefix).
 
-When `githubUsers` is empty or `GITHUB_TOKEN` is unset, the build omits the commit field cleanly.
+When `githubUsers` is configured without `GITHUB_TOKEN`, the build logs a warning and omits the commit field rather than showing synthetic activity for your profile. To hide the commit field completely, leave `githubUsers: []` and set `sampleCommits: false`.
 
 ## Project structure
 

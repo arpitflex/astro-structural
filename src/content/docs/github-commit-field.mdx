@@ -2,12 +2,14 @@
 kind: note
 title: Enabling the GitHub commit field on the home page
 date: 2026-05-02
-dek: How the 48-week contribution grid fetches data at build time and degrades gracefully when unconfigured.
+dek: How the 48-week contribution grid previews out of the box, fetches live GitHub data at build time, and omits synthetic data once configured.
 ---
 
 ## how it works
 
-At build time, `src/lib/github.ts` queries GitHub's GraphQL `contributionCalendar` across every username listed in `SITE.githubUsers` (`src/data/site.ts`), sums daily counts, and maps the last 48 weeks into `--heat-0` through `--heat-4`.
+Out of the box (`githubUsers: []` and `sampleCommits: true` in `src/data/site.ts`), `src/lib/github.ts` renders a deterministic 48-week sample grid (`activity, past 48 weeks`) so the home layout previews without credentials.
+
+Once `SITE.githubUsers` lists one or more usernames, sample mode turns off and `src/lib/github.ts` queries GitHub's GraphQL `contributionCalendar` at build time, sums daily counts across accounts, and maps the last 48 weeks into `--heat-0` through `--heat-4` (`github, past 48 weeks`).
 
 On narrower viewports, `CommitField.astro` trims older columns cleanly to preserve square aspect ratios: 48 weeks on desktop, 24 weeks under `760px`, and 12 weeks under `600px`.
 
@@ -16,7 +18,7 @@ On narrower viewports, `CommitField.astro` trims older columns cleanly to preser
 1. Add one or more GitHub handles to `githubUsers` in `src/data/site.ts`:
 
 ```ts
-githubUsers: ['your-handle'];
+githubUsers: ['your-handle'],
 ```
 
 2. Copy `.env.example` to `.env` for local builds and provide a token with public profile read access:
@@ -25,4 +27,4 @@ githubUsers: ['your-handle'];
 GITHUB_TOKEN=ghp_your_token_here
 ```
 
-3. For production deployments, pass `GITHUB_TOKEN` in your CI environment. When `githubUsers` is empty or `GITHUB_TOKEN` is absent, the build simply omits the commit field rather than displaying synthetic activity.
+3. For production deployments, pass `GITHUB_TOKEN` in your CI environment (for GitHub Actions, store a personal access token as `GH_TOKEN` in repository secrets since GitHub reserves the `GITHUB_` prefix). When `githubUsers` is configured without `GITHUB_TOKEN`, the build logs a warning and omits the commit field rather than displaying synthetic activity. To hide the field completely, leave `githubUsers: []` and set `sampleCommits: false`.
